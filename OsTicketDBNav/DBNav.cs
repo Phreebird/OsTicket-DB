@@ -22,13 +22,13 @@ namespace OsTicketDBNav
             try
             {
                 dataBase.Open();
-                //databaseCommand.CommandText = "SELECT * FROM 'ost_ticket' WHERE status='open'";
                 MySqlDataAdapter adapter = new MySqlDataAdapter("SELECT * FROM `ost_ticket` WHERE `status` = 'open';", dataBase);
                 DataSet ds = new DataSet();
                 adapter.Fill(ds);
                 dataBase.Close();
                 return ds;          
-            } catch (Exception)
+            }
+            catch (Exception)
             {
                 throw;
             }
