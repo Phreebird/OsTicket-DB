@@ -8,15 +8,19 @@ namespace OsTicketDBNav
 {
     public class Message
     {
-        public Message(String userName, String messageSubject, String messageData, DateTime timeRecieved)
+        public Message(String posterName, String messageSubject, String messageData, DateTime timeRecieved)
         {
             this.messageData = messageData;
-            this.userName = userName;
+            this.posterName = posterName;
             this.messageSubject = messageSubject;
             this.timeRecieved = timeRecieved;
         }
+        public Message() { }
+        public String messageTitle { get; set; }
         public String messageData { get; set; }
-        public String userName { get; set; }
+        public char threadType { get; set; }
+        public String posterName { get; set; }
+        public int responseNumber { get; set; }
         public String messageSubject { get; set; }
         public DateTime timeRecieved { get; set; }
     }
