@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace OsTicketDBNav
 {
-    class Message
+    public class Message
     {
         public Message(String userName, String messageSubject, String messageData, DateTime timeRecieved)
         {

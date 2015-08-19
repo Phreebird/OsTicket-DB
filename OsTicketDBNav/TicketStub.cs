@@ -6,19 +6,18 @@ using System.Threading.Tasks;
 
 namespace OsTicketDBNav
 {
-    class TicketStub
+    public class TicketStub
     {
         public TicketStub() { }
-        public String toString()
+        public override String ToString()
         {
-            return "";
+            return "Ticket ID:" + ticketNumber + " Ticket Subject:" + ticketSubject;
         }
         //TODO: Add sophisticaed constructor
-        public String ticketSubject { get; set; }
-        public int ticketNumber { get; set; }
         public int ticketTrueNumber { get; set; }
-        public String creatorUserName { get; set; }
-        public String creatorIpAddress { get; set; }
+        public int ticketNumber { get; set; }
+        public String ticketSubject { get; set; }      
+        public int creatorUserId { get; set; }
         public int ticketPriority { get; set; }
         public Boolean isOpen { get; set; }
         public String ticketCompany { get; set; }
