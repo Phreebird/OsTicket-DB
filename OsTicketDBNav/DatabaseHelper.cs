@@ -165,7 +165,8 @@ namespace OsTicketDBNav
         }
         public void CloseTicket(TicketStub stub)
         {
-            //
+            MySqlConnection database = new MySqlConnection(connectionString);
+
         }
         public void CloseTicket(Ticket ticket)
         {
