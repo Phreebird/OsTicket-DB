@@ -8,10 +8,7 @@ namespace OsTicketDBNav
 {
     public class Ticket : TicketStub
     {
-        public Ticket()
-        {
-            
-        }
+        public Ticket()  {}
         public Ticket(TicketStub stub)
         {
             this.ticketTrueNumber = stub.ticketTrueNumber;

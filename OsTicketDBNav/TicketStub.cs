@@ -18,6 +18,7 @@ namespace OsTicketDBNav
         public int ticketNumber { get; set; }
         public String ticketSubject { get; set; }      
         public int creatorUserId { get; set; }
+        public int closerUserId { get; set; }
         public int ticketPriority { get; set; }
         public Boolean isOpen { get; set; }
         public String ticketCompany { get; set; }

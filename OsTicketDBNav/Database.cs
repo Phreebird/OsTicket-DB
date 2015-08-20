@@ -8,12 +8,13 @@ using MySql.Data.MySqlClient;
 
 namespace OsTicketDBNav
 {
-    public class DatabaseHelper
+    public class Database
     {
-        private string connectionString;
-        public DatabaseHelper(String dbServer, String dbName, String dbUser, String dbPassword)
+        private string connectionString, dbName;
+        public Database(String dbServer, String dbName, String dbUser, String dbPassword)
         {
             this.connectionString = "Server=" + dbServer + ";Database=" + dbName + ";Uid=" + dbUser + ";Pwd=" + dbPassword + ";" + "Convert Zero Datetime=True";
+            this.dbName = dbName;
         }
         public List<TicketStub> PullOpenTicketStubs()
         {
@@ -166,11 +167,26 @@ namespace OsTicketDBNav
         public void CloseTicket(TicketStub stub)
         {
             MySqlConnection database = new MySqlConnection(connectionString);
-
-        }
-        public void CloseTicket(Ticket ticket)
-        {
-            //
+            int ticketNumberToCLose = stub.ticketTrueNumber;
+            try
+            {
+                MySqlCommand closeTicketCommand = new MySqlCommand("UPDATE `ost_ticket` SET `status`=\"closed\" WHERE `ticket_id`=" + ticketNumberToCLose + ";", database);
+                MySqlCommand addTimeClosedCommand = new MySqlCommand("UPDATE `ost_ticket` SET `closed`=\"" + DateTime.Now.ToString("yyyy-MM-dd h:mm:tt") + "\" WHERE `ticket_id`=" + ticketNumberToCLose + ";", database);                
+                database.Open();
+                if (closeTicketCommand.ExecuteNonQuery() == 0)
+                    throw new Exception("Zero rows affected.");
+                if (addTimeClosedCommand.ExecuteNonQuery() == 0)
+                    throw new Exception("Zero rows affected.");
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+            finally
+            {
+                if(database != null)
+                    database.Close();
+            }
         }
     }
 }
