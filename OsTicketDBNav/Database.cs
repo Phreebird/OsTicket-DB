@@ -163,18 +163,16 @@ namespace OsTicketDBNav
         public void ReplyToTicket(Ticket ticketToRespondTo, Message messageToReplyWith)
         {
             MySqlConnection database = new MySqlConnection(connectionString);
-            MySqlCommand appendResponse = new MySqlCommand("INSERT INTO `ost_ticket_thread` VALUES (DEFAULT ,@pid,@trueticketid,@staffid,@userid,@threadtype,@poster,@source,@title,@body,@ipadd,@created, DEFAULT, DEFAULT)", database);
-            appendResponse.Parameters.AddWithValue("@pid", "0"); // no clue what pid is.
-            appendResponse.Parameters.AddWithValue("@trueticketid", ticketToRespondTo.ticketTrueNumber);
-            appendResponse.Parameters.AddWithValue("@staffid", 0);
-            appendResponse.Parameters.AddWithValue("@userid", 0);
-            appendResponse.Parameters.AddWithValue("@threadtype", "R");
-            appendResponse.Parameters.AddWithValue("@poster", "meow"); //TODO: FIX
-            appendResponse.Parameters.AddWithValue("@source", "Ticket App");
-            appendResponse.Parameters.AddWithValue("@title", messageToReplyWith.messageTitle);
-            appendResponse.Parameters.AddWithValue("@body", messageToReplyWith.messageData);
-            appendResponse.Parameters.AddWithValue("@ipadd", "127.0.0.1");
-            appendResponse.Parameters.AddWithValue("@created", DateTime.Now.ToString("yyyy-MM-dd h:mm:tt"));
+            //MySqlCommand appendResponse = new MySqlCommand("INSERT INTO `ost_ticket_thread` VALUES (DEFAULT 
+            // ,@pid,@trueticketid,@staffid,@userid,@threadtype,@poster,@source,@title,@body,@ipadd,@created, DEFAULT, DEFAULT)", database);
+            StringBuilder replyQuery = new StringBuilder();
+            replyQuery.Append("INSERT INTO `ost_ticket_thread` VALUES (");
+            replyQuery.Append("DEFAULT,"); // To auto increment to responseID
+            replyQuery.Append(String.Format("{0}, {1}, {2},", "0", ticketToRespondTo.ticketTrueNumber, "0" )); //pid, true ticket number and TODO: implement staff id's
+            replyQuery.Append(String.Format("{0}, \'{1}\', \"{2}\",", "0", messageToReplyWith.threadType, messageToReplyWith.posterName)); // userid, threadType, poster
+            replyQuery.Append(String.Format("\"{0}\", \"{1}\", \"{2}\",", "TICKET_APP" , messageToReplyWith.messageTitle, messageToReplyWith.messageData)); //source, title, body 
+            replyQuery.Append(String.Format("{0}, \"{1}\", DEFAULT);", "DEFAULT", DateTime.Now.ToString("yyyy-MM-dd HH:mm:tt"))); // ip add, Created Time, Updated time  TODO: Implement ip addr
+            MySqlCommand appendResponse = new MySqlCommand(replyQuery.ToString(), database);
             try
             {
                 database.Open();
@@ -197,7 +195,7 @@ namespace OsTicketDBNav
             try
             {
                 MySqlCommand closeTicketCommand = new MySqlCommand("UPDATE `ost_ticket` SET `status`=\"closed\" WHERE `ticket_id`=" + ticketNumberToCLose + ";", database);
-                MySqlCommand addTimeClosedCommand = new MySqlCommand("UPDATE `ost_ticket` SET `closed`=\"" + DateTime.Now.ToString("yyyy-MM-dd h:mm:tt") + "\" WHERE `ticket_id`=" + ticketNumberToCLose + ";", database);                
+                MySqlCommand addTimeClosedCommand = new MySqlCommand("UPDATE `ost_ticket` SET `closed`=\"" + DateTime.Now.ToString("yyyy-MM-dd HH:mm:tt") + "\" WHERE `ticket_id`=" + ticketNumberToCLose + ";", database);                
                 database.Open();
                 if (closeTicketCommand.ExecuteNonQuery() == 0)
                     throw new Exception("Zero rows affected.");
