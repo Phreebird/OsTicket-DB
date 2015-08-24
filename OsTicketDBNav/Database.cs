@@ -162,7 +162,33 @@ namespace OsTicketDBNav
         }
         public void ReplyToTicket(Ticket ticketToRespondTo, Message messageToReplyWith)
         {
-            //
+            MySqlConnection database = new MySqlConnection(connectionString);
+            MySqlCommand appendResponse = new MySqlCommand("INSERT INTO `ost_ticket_thread` VALUES (DEFAULT ,@pid,@trueticketid,@staffid,@userid,@threadtype,@poster,@source,@title,@body,@ipadd,@created, DEFAULT, DEFAULT)", database);
+            appendResponse.Parameters.AddWithValue("@pid", "0"); // no clue what pid is.
+            appendResponse.Parameters.AddWithValue("@trueticketid", ticketToRespondTo.ticketTrueNumber);
+            appendResponse.Parameters.AddWithValue("@staffid", 0);
+            appendResponse.Parameters.AddWithValue("@userid", 0);
+            appendResponse.Parameters.AddWithValue("@threadtype", "R");
+            appendResponse.Parameters.AddWithValue("@poster", "meow"); //TODO: FIX
+            appendResponse.Parameters.AddWithValue("@source", "Ticket App");
+            appendResponse.Parameters.AddWithValue("@title", messageToReplyWith.messageTitle);
+            appendResponse.Parameters.AddWithValue("@body", messageToReplyWith.messageData);
+            appendResponse.Parameters.AddWithValue("@ipadd", "127.0.0.1");
+            appendResponse.Parameters.AddWithValue("@created", DateTime.Now.ToString("yyyy-MM-dd h:mm:tt"));
+            try
+            {
+                database.Open();
+                appendResponse.ExecuteNonQuery();
+            }
+            catch (Exception e)
+            {
+                throw;
+            }
+            finally
+            {
+                database.Close();
+            }
+
         }
         public void CloseTicket(TicketStub stub)
         {
@@ -177,6 +203,7 @@ namespace OsTicketDBNav
                     throw new Exception("Zero rows affected.");
                 if (addTimeClosedCommand.ExecuteNonQuery() == 0)
                     throw new Exception("Zero rows affected.");
+                Events.AddCloseTicketEvent(database, stub);
             }
             catch (Exception)
             {
