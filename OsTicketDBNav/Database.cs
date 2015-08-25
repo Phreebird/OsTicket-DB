@@ -16,6 +16,12 @@ namespace OsTicketDBNav
             this.connectionString = "Server=" + dbServer + ";Database=" + dbName + ";Uid=" + dbUser + ";Pwd=" + dbPassword + ";" + "Convert Zero Datetime=True";
             this.dbName = dbName;
         }
+        public int OpenTicket(Ticket ticket)
+        {
+            //TODO: This
+            throw new NotImplementedException("oops");
+            return -1;
+        }
         public List<TicketStub> PullOpenTicketStubs()
         {
             List<TicketStub> ticketStubs = new List<TicketStub>();
@@ -66,9 +72,7 @@ namespace OsTicketDBNav
             }
             finally
             {
-                if (dataBase != null)
-                    dataBase.Close();
-                
+                dataBase.Close();
             }
             return ticketStubs;
         }
@@ -123,9 +127,7 @@ namespace OsTicketDBNav
             }
             finally
             {
-                if (dataBase != null)
-                    dataBase.Close();
-
+                dataBase.Close();
             }
             return ticketStubs;
         }
@@ -152,10 +154,12 @@ namespace OsTicketDBNav
                 }
                 reader.Close();
             }
-            catch (Exception) {
+            catch (Exception)
+            {
                 throw;
             }
-            finally { 
+            finally
+            { 
                 dataBase.Close();
             }
             return newTicket;
@@ -201,7 +205,7 @@ namespace OsTicketDBNav
                     throw new Exception("Zero rows affected.");
                 if (addTimeClosedCommand.ExecuteNonQuery() == 0)
                     throw new Exception("Zero rows affected.");
-                Events.AddCloseTicketEvent(database, stub);
+                Events.AddCloseTicketEvent(database, dbName, stub);
             }
             catch (Exception)
             {
@@ -209,8 +213,7 @@ namespace OsTicketDBNav
             }
             finally
             {
-                if(database != null)
-                    database.Close();
+                database.Close();
             }
         }
     }
