@@ -38,11 +38,13 @@ namespace OsTicketDBNav
                 while(ticketsReader.Read())
                 {
                     TicketStub currentRow = new TicketStub();
-                    currentRow.ticketTrueNumber = ticketsReader.GetInt32("ticket_id");
-                    currentRow.ticketNumber = ticketsReader.GetInt32("number");
+                    currentRow.trueNumber = ticketsReader.GetInt32("ticket_id");
+                    currentRow.number = ticketsReader.GetInt32("number");
                     currentRow.creatorUserId = ticketsReader.GetInt32("user_id");
-                    currentRow.ticketLastResponse = DateTime.Parse(ticketsReader.GetString("lastmessage"));
-                    currentRow.ticketCreationDate = DateTime.Parse(ticketsReader.GetString("created"));
+                    currentRow.deparmentId = ticketsReader.GetInt32("dept_id");
+                    currentRow.lastResponse = DateTime.Parse(ticketsReader.GetString("lastmessage"));
+                    currentRow.creationDate = DateTime.Parse(ticketsReader.GetString("created"));
+                    currentRow.isOpen = true;
                     ticketStubs.Add(currentRow);       
                 }
                 ticketsReader.Close();
@@ -52,11 +54,11 @@ namespace OsTicketDBNav
                 {
                     if (ticketMatchesFound >= ticketStubs.Count)
                        break;
-                    if (ticketsReader.GetInt32("ticket_id") == ticketStubs[ticketMatchesFound].ticketTrueNumber)
+                    if (ticketsReader.GetInt32("ticket_id") == ticketStubs[ticketMatchesFound].trueNumber)
                     {
-                        ticketStubs[ticketMatchesFound].ticketCompany = ticketsReader.GetString("company");
-                        ticketStubs[ticketMatchesFound].ticketSubject = ticketsReader.GetString("subject");
-                        ticketStubs[ticketMatchesFound].ticketPriority = ticketsReader.GetInt32("priority_id");
+                        ticketStubs[ticketMatchesFound].company = ticketsReader.GetString("company");
+                        ticketStubs[ticketMatchesFound].subject = ticketsReader.GetString("subject");
+                        ticketStubs[ticketMatchesFound].priority = ticketsReader.GetInt32("priority_id");
                         totalTicketsProcessed++;
                         ticketMatchesFound++;
                     }                        
@@ -92,11 +94,12 @@ namespace OsTicketDBNav
                 while (ticketsReader.Read())
                 {
                     TicketStub currentRow = new TicketStub();
-                    currentRow.ticketTrueNumber = ticketsReader.GetInt32("ticket_id");
-                    currentRow.ticketNumber = ticketsReader.GetInt32("number");
+                    currentRow.trueNumber = ticketsReader.GetInt32("ticket_id");
+                    currentRow.number = ticketsReader.GetInt32("number");
                     currentRow.creatorUserId = ticketsReader.GetInt32("user_id");
-                    currentRow.ticketLastResponse = DateTime.Parse(ticketsReader.GetString("lastmessage"));
-                    currentRow.ticketCreationDate = DateTime.Parse(ticketsReader.GetString("created"));
+                    currentRow.deparmentId = ticketsReader.GetInt32("dept_id");
+                    currentRow.lastResponse = DateTime.Parse(ticketsReader.GetString("lastmessage"));
+                    currentRow.creationDate = DateTime.Parse(ticketsReader.GetString("created"));
                     currentRow.isOpen = false;
                     ticketStubs.Add(currentRow);
                 }
@@ -107,11 +110,11 @@ namespace OsTicketDBNav
                 {
                     if (ticketMatchesFound >= ticketStubs.Count)
                         break;
-                    if (ticketsReader.GetInt32("ticket_id") == ticketStubs[ticketMatchesFound].ticketTrueNumber)
+                    if (ticketsReader.GetInt32("ticket_id") == ticketStubs[ticketMatchesFound].trueNumber)
                     {
-                        ticketStubs[ticketMatchesFound].ticketCompany = ticketsReader.GetString("company");
-                        ticketStubs[ticketMatchesFound].ticketSubject = ticketsReader.GetString("subject");
-                        ticketStubs[ticketMatchesFound].ticketPriority = ticketsReader.GetInt32("priority_id");
+                        ticketStubs[ticketMatchesFound].company = ticketsReader.GetString("company");
+                        ticketStubs[ticketMatchesFound].subject = ticketsReader.GetString("subject");
+                        ticketStubs[ticketMatchesFound].priority = ticketsReader.GetInt32("priority_id");
                         totalTicketsProcessed++;
                         ticketMatchesFound++;
                     }
@@ -134,13 +137,13 @@ namespace OsTicketDBNav
         public Ticket PullFullTicket(TicketStub stub)
         {
             MySqlConnection dataBase = new MySqlConnection(connectionString);
-            MySqlCommand pullThreadsCommand = new MySqlCommand("SELECT * FROM `ost_ticket_thread` WHERE `ticket_id` = " + stub.ticketTrueNumber + ";", dataBase);
+            MySqlCommand pullThreadsCommand = new MySqlCommand("SELECT * FROM `ost_ticket_thread` WHERE `ticket_id` = " + stub.trueNumber + ";", dataBase);
             Ticket newTicket = new Ticket(stub);
             try
             {
                 dataBase.Open();
                 MySqlDataReader reader = pullThreadsCommand.ExecuteReader();
-                newTicket.ticketResponses = new List<Message>();
+                newTicket.responses = new List<Message>();
                 while (reader.Read())
                 {
                     Message currentMessage = new Message();
@@ -150,7 +153,7 @@ namespace OsTicketDBNav
                     currentMessage.messageTitle = reader.GetString("title");
                     currentMessage.messageData = reader.GetString("body");
                     currentMessage.timeRecieved = DateTime.Parse(reader.GetString("created"));
-                    newTicket.ticketResponses.Add(currentMessage);
+                    newTicket.responses.Add(currentMessage);
                 }
                 reader.Close();
             }
@@ -172,7 +175,7 @@ namespace OsTicketDBNav
             StringBuilder replyQuery = new StringBuilder();
             replyQuery.Append("INSERT INTO `ost_ticket_thread` VALUES (");
             replyQuery.Append("DEFAULT,"); // To auto increment to responseID
-            replyQuery.Append(String.Format("{0}, {1}, {2},", "0", ticketToRespondTo.ticketTrueNumber, "0" )); //pid, true ticket number and TODO: implement staff id's
+            replyQuery.Append(String.Format("{0}, {1}, {2},", "0", ticketToRespondTo.trueNumber, "0" )); //pid, true ticket number and TODO: implement staff id's
             replyQuery.Append(String.Format("{0}, \'{1}\', \"{2}\",", "0", messageToReplyWith.threadType, messageToReplyWith.posterName)); // userid, threadType, poster
             replyQuery.Append(String.Format("\"{0}\", \"{1}\", \"{2}\",", "TICKET_APP" , messageToReplyWith.messageTitle, messageToReplyWith.messageData)); //source, title, body 
             replyQuery.Append(String.Format("{0}, \"{1}\", DEFAULT);", "DEFAULT", DateTime.Now.ToString("yyyy-MM-dd HH:mm:tt"))); // ip add, Created Time, Updated time  TODO: Implement ip addr
@@ -182,7 +185,7 @@ namespace OsTicketDBNav
                 database.Open();
                 appendResponse.ExecuteNonQuery();
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 throw;
             }
@@ -195,11 +198,11 @@ namespace OsTicketDBNav
         public void CloseTicket(TicketStub stub)
         {
             MySqlConnection database = new MySqlConnection(connectionString);
-            int ticketNumberToCLose = stub.ticketTrueNumber;
+            int numberToCLose = stub.trueNumber;
             try
             {
-                MySqlCommand closeTicketCommand = new MySqlCommand("UPDATE `ost_ticket` SET `status`=\"closed\" WHERE `ticket_id`=" + ticketNumberToCLose + ";", database);
-                MySqlCommand addTimeClosedCommand = new MySqlCommand("UPDATE `ost_ticket` SET `closed`=\"" + DateTime.Now.ToString("yyyy-MM-dd HH:mm:tt") + "\" WHERE `ticket_id`=" + ticketNumberToCLose + ";", database);                
+                MySqlCommand closeTicketCommand = new MySqlCommand("UPDATE `ost_ticket` SET `status`=\"closed\" WHERE `ticket_id`=" + numberToCLose + ";", database);
+                MySqlCommand addTimeClosedCommand = new MySqlCommand("UPDATE `ost_ticket` SET `closed`=\"" + DateTime.Now.ToString("yyyy-MM-dd HH:mm:tt") + "\" WHERE `ticket_id`=" + numberToCLose + ";", database);                
                 database.Open();
                 if (closeTicketCommand.ExecuteNonQuery() == 0)
                     throw new Exception("Zero rows affected.");

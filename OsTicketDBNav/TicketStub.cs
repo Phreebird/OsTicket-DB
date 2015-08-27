@@ -11,18 +11,19 @@ namespace OsTicketDBNav
         public TicketStub() { }
         public override String ToString()
         {
-            return "Ticket ID:" + ticketNumber + " Ticket Subject:" + ticketSubject;
+            return "Ticket ID:" + number + " Ticket Subject:" + subject;
         }
         //TODO: Add sophisticaed constructor
-        public int ticketTrueNumber { get; set; }
-        public int ticketNumber { get; set; }
-        public String ticketSubject { get; set; }      
+        public int trueNumber { get; set; }
+        public int deparmentId { get; set; }
+        public int number { get; set; }
+        public String subject { get; set; }      
         public int creatorUserId { get; set; }
         public int closerUserId { get; set; }
-        public int ticketPriority { get; set; }
+        public int priority { get; set; }
         public Boolean isOpen { get; set; }
-        public String ticketCompany { get; set; }
-        public DateTime ticketCreationDate { get; set; }
-        public DateTime ticketLastResponse { get; set; }
+        public String company { get; set; }
+        public DateTime creationDate { get; set; }
+        public DateTime lastResponse { get; set; }
     }
 }

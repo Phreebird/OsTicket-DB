@@ -11,16 +11,16 @@ namespace OsTicketDBNav
         public Ticket()  {}
         public Ticket(TicketStub stub)
         {
-            this.ticketTrueNumber = stub.ticketTrueNumber;
-            this.ticketNumber = stub.ticketNumber;
-            this.ticketSubject = stub.ticketSubject;
+            this.trueNumber = stub.trueNumber;
+            this.number = stub.number;
+            this.subject = stub.subject;
             this.creatorUserId = stub.creatorUserId;
-            this.ticketPriority = stub.ticketPriority;
+            this.priority = stub.priority;
             this.isOpen = stub.isOpen;
-            this.ticketCompany = stub.ticketCompany;
-            this.ticketCreationDate = stub.ticketCreationDate;
-            this.ticketCreationDate = stub.ticketLastResponse;
+            this.company = stub.company;
+            this.creationDate = stub.creationDate;
+            this.lastResponse = stub.lastResponse;
         }
-        public List<Message> ticketResponses { get; set; }
+        public List<Message> responses { get; set; }
     }
 }
