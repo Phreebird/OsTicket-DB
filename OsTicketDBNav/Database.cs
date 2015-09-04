@@ -26,7 +26,7 @@ namespace OsTicketDBNav
         {
             List<TicketStub> ticketStubs = new List<TicketStub>();
             MySqlConnection dataBase = new MySqlConnection(connectionString);
-            MySqlCommand firstDatabaseCommand = new MySqlCommand("SELECT * FROM `ost_ticket` WHERE `status` = 'open';",dataBase);
+            MySqlCommand firstDatabaseCommand = new MySqlCommand("SELECT * FROM `ost_ticket` WHERE `status_id` = 1;",dataBase);
             /* TODO: Optimize this command,  Could probbably update the sql call to 
             "SELECT * FROM `ost_ticket__cdata` where `ticket_id` is" + currentListTicketstub.TicketId + ";" 
             Do this to avoid pulling down the entire damn table. */
@@ -56,9 +56,8 @@ namespace OsTicketDBNav
                        break;
                     if (ticketsReader.GetInt32("ticket_id") == ticketStubs[ticketMatchesFound].trueNumber)
                     {
-                        ticketStubs[ticketMatchesFound].company = ticketsReader.GetString("company");
                         ticketStubs[ticketMatchesFound].subject = ticketsReader.GetString("subject");
-                        ticketStubs[ticketMatchesFound].priority = ticketsReader.GetInt32("priority_id");
+                        ticketStubs[ticketMatchesFound].priority = ticketsReader.GetInt32("priority");
                         totalTicketsProcessed++;
                         ticketMatchesFound++;
                     }                        
@@ -82,7 +81,7 @@ namespace OsTicketDBNav
         {
             List<TicketStub> ticketStubs = new List<TicketStub>(maxResults);
             MySqlConnection dataBase = new MySqlConnection(connectionString);
-            MySqlCommand firstDatabaseCommand = new MySqlCommand("SELECT * FROM `ost_ticket` WHERE `status` = 'closed' LIMIT " + maxResults + "", dataBase);
+            MySqlCommand firstDatabaseCommand = new MySqlCommand("SELECT * FROM `ost_ticket` WHERE `status_id` = 3 LIMIT " + maxResults + "", dataBase);
             /* TODO: Optimize this command,  Could probbably update the sql call to 
             "SELECT * FROM `ost_ticket__cdata` where `ticket_id` is" + currentListTicketstub.TicketId + ";" 
             Do this to avoid pulling down the entire damn table. */
@@ -112,9 +111,8 @@ namespace OsTicketDBNav
                         break;
                     if (ticketsReader.GetInt32("ticket_id") == ticketStubs[ticketMatchesFound].trueNumber)
                     {
-                        ticketStubs[ticketMatchesFound].company = ticketsReader.GetString("company");
                         ticketStubs[ticketMatchesFound].subject = ticketsReader.GetString("subject");
-                        ticketStubs[ticketMatchesFound].priority = ticketsReader.GetInt32("priority_id");
+                        ticketStubs[ticketMatchesFound].priority = ticketsReader.GetInt32("priority");
                         totalTicketsProcessed++;
                         ticketMatchesFound++;
                     }
