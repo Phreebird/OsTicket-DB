@@ -18,19 +18,17 @@ namespace OsTicketDBNav
         }
         public int OpenTicket(Ticket ticket)
         {
-            //TODO: This
-            throw new NotImplementedException("oops");
-            return -1;
+            throw new NotImplementedException("TODO");
         }
         public List<TicketStub> PullOpenTicketStubs()
         {
             List<TicketStub> ticketStubs = new List<TicketStub>();
             MySqlConnection dataBase = new MySqlConnection(connectionString);
-            MySqlCommand firstDatabaseCommand = new MySqlCommand("SELECT * FROM `ost_ticket` WHERE `status_id` = 1;",dataBase);
+            MySqlCommand firstDatabaseCommand = new MySqlCommand(Constants.pullOpenTicketsQuery ,dataBase);
             /* TODO: Optimize this command,  Could probbably update the sql call to 
             "SELECT * FROM `ost_ticket__cdata` where `ticket_id` is" + currentListTicketstub.TicketId + ";" 
             Do this to avoid pulling down the entire damn table. */
-            MySqlCommand SecondDatabaseCommand = new MySqlCommand("SELECT * FROM `ost_ticket__cdata`;",dataBase);
+            MySqlCommand SecondDatabaseCommand = new MySqlCommand(Constants.pullOpenTicketDataQuery ,dataBase);
             try
             {
                 dataBase.Open();
@@ -38,12 +36,12 @@ namespace OsTicketDBNav
                 while(ticketsReader.Read())
                 {
                     TicketStub currentRow = new TicketStub();
-                    currentRow.trueNumber = ticketsReader.GetInt32("ticket_id");
-                    currentRow.number = ticketsReader.GetInt32("number");
-                    currentRow.creatorUserId = ticketsReader.GetInt32("user_id");
-                    currentRow.deparmentId = ticketsReader.GetInt32("dept_id");
-                    currentRow.lastResponse = DateTime.Parse(ticketsReader.GetString("lastmessage"));
-                    currentRow.creationDate = DateTime.Parse(ticketsReader.GetString("created"));
+                    currentRow.trueNumber = ticketsReader.GetInt32(Constants.tableTicketID);
+                    currentRow.number = ticketsReader.GetInt32(Constants.tableTicketNumber);
+                    currentRow.creatorUserId = ticketsReader.GetInt32(Constants.tableUserID);
+                    currentRow.deparmentId = ticketsReader.GetInt32(Constants.tableDeptID);
+                    currentRow.lastResponse = DateTime.Parse(ticketsReader.GetString(Constants.lastMessage));
+                    currentRow.creationDate = DateTime.Parse(ticketsReader.GetString(Constants.creationDate));
                     currentRow.isOpen = true;
                     ticketStubs.Add(currentRow);       
                 }
@@ -54,10 +52,10 @@ namespace OsTicketDBNav
                 {
                     if (ticketMatchesFound >= ticketStubs.Count)
                        break;
-                    if (ticketsReader.GetInt32("ticket_id") == ticketStubs[ticketMatchesFound].trueNumber)
+                    if (ticketsReader.GetInt32(Constants.tableTicketID) == ticketStubs[ticketMatchesFound].trueNumber)
                     {
-                        ticketStubs[ticketMatchesFound].subject = ticketsReader.GetString("subject");
-                        ticketStubs[ticketMatchesFound].priority = ticketsReader.GetInt32("priority");
+                        ticketStubs[ticketMatchesFound].subject = ticketsReader.GetString(Constants.subject);
+                        ticketStubs[ticketMatchesFound].priority = ticketsReader.GetInt32(Constants.priority);
                         totalTicketsProcessed++;
                         ticketMatchesFound++;
                     }                        
@@ -93,12 +91,12 @@ namespace OsTicketDBNav
                 while (ticketsReader.Read())
                 {
                     TicketStub currentRow = new TicketStub();
-                    currentRow.trueNumber = ticketsReader.GetInt32("ticket_id");
-                    currentRow.number = ticketsReader.GetInt32("number");
-                    currentRow.creatorUserId = ticketsReader.GetInt32("user_id");
-                    currentRow.deparmentId = ticketsReader.GetInt32("dept_id");
-                    currentRow.lastResponse = DateTime.Parse(ticketsReader.GetString("lastmessage"));
-                    currentRow.creationDate = DateTime.Parse(ticketsReader.GetString("created"));
+                    currentRow.trueNumber = ticketsReader.GetInt32(Constants.tableTicketID);
+                    currentRow.number = ticketsReader.GetInt32(Constants.tableTicketNumber);
+                    currentRow.creatorUserId = ticketsReader.GetInt32(Constants.tableUserID);
+                    currentRow.deparmentId = ticketsReader.GetInt32(Constants.tableDeptID);
+                    currentRow.lastResponse = DateTime.Parse(ticketsReader.GetString(Constants.lastMessage));
+                    currentRow.creationDate = DateTime.Parse(ticketsReader.GetString(Constants.creationDate));
                     currentRow.isOpen = false;
                     ticketStubs.Add(currentRow);
                 }
@@ -109,10 +107,10 @@ namespace OsTicketDBNav
                 {
                     if (ticketMatchesFound >= ticketStubs.Count)
                         break;
-                    if (ticketsReader.GetInt32("ticket_id") == ticketStubs[ticketMatchesFound].trueNumber)
+                    if (ticketsReader.GetInt32(Constants.tableTicketID) == ticketStubs[ticketMatchesFound].trueNumber)
                     {
-                        ticketStubs[ticketMatchesFound].subject = ticketsReader.GetString("subject");
-                        ticketStubs[ticketMatchesFound].priority = ticketsReader.GetInt32("priority");
+                        ticketStubs[ticketMatchesFound].subject = ticketsReader.GetString(Constants.subject);
+                        ticketStubs[ticketMatchesFound].priority = ticketsReader.GetInt32(Constants.priority);
                         totalTicketsProcessed++;
                         ticketMatchesFound++;
                     }
@@ -150,7 +148,7 @@ namespace OsTicketDBNav
                     currentMessage.posterName = reader.GetString("poster");
                     currentMessage.messageTitle = reader.GetString("title");
                     currentMessage.messageData = reader.GetString("body");
-                    currentMessage.timeRecieved = DateTime.Parse(reader.GetString("created"));
+                    currentMessage.timeRecieved = DateTime.Parse(reader.GetString(Constants.creationDate));
                     newTicket.responses.Add(currentMessage);
                 }
                 reader.Close();
