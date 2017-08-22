@@ -11,7 +11,6 @@ namespace OsTicketDBNav
     {
         public static void AddCloseTicketEvent(MySqlConnection db, string dbName, TicketStub stub)
         {
-            //TODO: Get rid of dfgrimes                                         HERE
             string insertCloseEventString = string.Format(@"INSERT INTO `{0}`.`ost_ticket_event` 
                 (`ticket_id`, `staff_id`, `team_id`, `dept_id`, `topic_id`, `state`, `staff`, `annulled`, `timestamp`) 
                 VALUES ('" + stub.trueNumber + "', '-1', '0', '" + stub.deparmentId + "', '0', 'closed', 'SYSTEM', '0', '" + DateTime.Now.ToString("yyyy-MM-dd HH:mm:tt") + "')", dbName);                
@@ -28,7 +27,6 @@ namespace OsTicketDBNav
         }
         public static void AddOpenedTicketEvent(MySqlConnection db, string dbName, TicketStub stub)
         {
-            //TODO: Get rid of dfgrimes                                         HERE
             string insertCloseEventString = string.Format(@"INSERT INTO `{0}`.`ost_ticket_event` 
                 (`ticket_id`, `staff_id`, `team_id`, `dept_id`, `topic_id`, `state`, `staff`, `annulled`, `timestamp`) 
                 VALUES ('" + stub.trueNumber + "', '-1', '0', '" + stub.deparmentId + "'', '0', 'created', 'SYSTEM TAPP', '0', '" + DateTime.Now.ToString("yyyy-MM-dd HH:mm:tt") + "')", dbName);
